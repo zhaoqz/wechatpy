@@ -106,6 +106,23 @@ class ParseMessageTestCase(unittest.TestCase):
 
         self.assertEqual('event', msg.type)
         self.assertEqual('subscribe', msg.event)
+        self.assertEqual('', msg.key)
+
+    def test_parse_subscribe_event_with_last_trade_no(self):
+        xml = """<xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[FromUser]]></FromUserName>
+        <CreateTime>123456789</CreateTime>
+        <MsgType><![CDATA[event]]></MsgType>
+        <Event><![CDATA[subscribe]]></Event>
+        <EventKey><![CDATA[last_trade_no_4008072001201701105817415015]]></EventKey>
+        </xml>"""
+
+        msg = parse_message(xml)
+
+        self.assertEqual('event', msg.type)
+        self.assertEqual('subscribe', msg.event)
+        self.assertEqual('last_trade_no_4008072001201701105817415015', msg.key)
 
     def test_parse_subscribe_scan_event(self):
         xml = """<xml>
@@ -242,3 +259,26 @@ class ParseMessageTestCase(unittest.TestCase):
         self.assertEqual('scanimage', msg.scene)
         self.assertEqual('keystandard', msg.standard)
         self.assertEqual('keystr', msg.key)
+
+    def test_parse_device_text_event(self):
+        from wechatpy.events import DeviceTextEvent
+
+        xml = """<xml>
+        <ToUserName><![CDATA[toUser]]></ToUserName>
+        <FromUserName><![CDATA[fromUser]]></FromUserName>
+        <CreateTime>1348831860</CreateTime>
+        <MsgType><![CDATA[device_text]]></MsgType>
+        <MsgId>1234567890123456</MsgId>
+        <OpenID><![CDATA[123]]></OpenID>
+        <DeviceID><![CDATA[123]]></DeviceID>
+        <DeviceType><![CDATA[123]]></DeviceType>
+        <SessionID><![CDATA[123]]></SessionID>
+        <Content><![CDATA[MTIz]]></Content>
+        </xml>"""
+
+        msg = parse_message(xml)
+
+        self.assertTrue(isinstance(msg, DeviceTextEvent))
+        self.assertEqual('123', msg.content)
+        self.assertEqual('123', msg.device_type)
+        self.assertEqual('123', msg.device_id)

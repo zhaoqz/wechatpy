@@ -63,12 +63,20 @@ pip install wechatpy[pycrypto]
 
 请阅读 [贡献代码指南](CONTRIBUTING.md)
 
+## 问题反馈
 
-##License
+我们主要使用 [GitHub issues](https://github.com/jxtech/wechatpy/issues) 进行问题追踪和反馈。
+
+QQ 群：176596300
+
+![wechatpy QQ 群](docs/_static/images/qq-group.png)
+
+
+## License
 
 The MIT License (MIT)
 
-Copyright (c) 2014-2015 messense
+Copyright (c) 2014-2017 messense
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

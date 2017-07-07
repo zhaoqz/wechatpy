@@ -51,6 +51,7 @@ class SubscribeEvent(BaseEvent):
     http://mp.weixin.qq.com/wiki/2/5baf56ce4947d35003b86a9805634b1e.html
     """
     event = 'subscribe'
+    key = StringField('EventKey', '')
 
 
 @register_event('unsubscribe')
@@ -295,17 +296,48 @@ class CardNotPassCheckEvent(BaseEvent):
 
 @register_event('user_get_card')
 class UserGetCardEvent(BaseEvent):
+    """
+    领取事件推送
+
+    详情请参阅
+    http://mp.weixin.qq.com/wiki/16/28b34ee91675a04cb24853768debded4.html#.E9.A2.86.E5.8F.96.E4.BA.8B.E4.BB.B6.E6.8E.A8.E9.80.81
+    """
     event = 'user_get_card'
     card_id = StringField('CardId')
     is_given_by_friend = IntegerField('IsGiveByFriend')
+    friend = StringField('FriendUserName')
     code = StringField('UserCardCode')
+    old_code = StringField('OldUserCardCode')
+    outer_id = StringField('OuterId')
 
 
 @register_event('user_del_card')
 class UserDeleteCardEvent(BaseEvent):
+    """
+    卡券删除事件推送
+
+    详情请参阅
+    http://mp.weixin.qq.com/wiki/16/28b34ee91675a04cb24853768debded4.html#.E5.88.A0.E9.99.A4.E4.BA.8B.E4.BB.B6.E6.8E.A8.E9.80.81
+    """
     event = 'user_del_card'
     card_id = StringField('CardId')
     code = StringField('UserCardCode')
+
+
+@register_event('user_consume_card')
+class UserConsumeCardEvent(BaseEvent):
+    """
+    卡券核销事件推送
+
+    详情请参阅
+    http://mp.weixin.qq.com/wiki/16/28b34ee91675a04cb24853768debded4.html#.E6.A0.B8.E9.94.80.E4.BA.8B.E4.BB.B6.E6.8E.A8.E9.80.81
+    """
+    event = 'user_consume_card'
+    card_id = StringField('CardId')
+    code = StringField('UserCardCode')
+    consume_source = StringField('ConsumeSource')
+    location_id = StringField('LocationId')
+    staff = StringField('StaffOpenId')
 
 
 @register_event('merchant_order')
@@ -343,11 +375,12 @@ class DeviceTextEvent(BaseEvent):
     device_id = StringField('DeviceID')
     session_id = StringField('SessionID')
     content = Base64DecodeField('Content')
+    open_id = StringField('OpenID')
 
 
 @register_event('device_bind')
 class DeviceBindEvent(BaseEvent):
-    event = 'bind'
+    event = 'device_bind'
     device_type = StringField('DeviceType')
     device_id = StringField('DeviceID')
     session_id = StringField('SessionID')
@@ -357,7 +390,7 @@ class DeviceBindEvent(BaseEvent):
 
 @register_event('device_unbind')
 class DeviceUnbindEvent(BaseEvent):
-    event = 'unbind'
+    event = 'device_unbind'
     device_type = StringField('DeviceType')
     device_id = StringField('DeviceID')
     session_id = StringField('SessionID')
@@ -367,7 +400,7 @@ class DeviceUnbindEvent(BaseEvent):
 
 @register_event('device_subscribe_status')
 class DeviceSubscribeStatusEvent(BaseEvent):
-    event = 'subscribe_status'
+    event = 'device_subscribe_status'
     device_type = StringField('DeviceType')
     device_id = StringField('DeviceID')
     open_id = StringField('OpenID')
@@ -376,7 +409,7 @@ class DeviceSubscribeStatusEvent(BaseEvent):
 
 @register_event('device_unsubscribe_status')
 class DeviceUnsubscribeStatusEvent(BaseEvent):
-    event = 'subscribe_status'
+    event = 'device_subscribe_status'
     device_type = StringField('DeviceType')
     device_id = StringField('DeviceID')
     open_id = StringField('OpenID')
