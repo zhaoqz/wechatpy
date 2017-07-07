@@ -15,6 +15,7 @@ from wechatpy.client.api.base import BaseWeChatAPI
 
 logger = logging.getLogger(__name__)
 
+http = requests.Session()
 
 def _is_api_endpoint(obj):
     return isinstance(obj, BaseWeChatAPI)
@@ -95,7 +96,7 @@ class BaseWeChatClient(object):
 
         kwargs['timeout'] = kwargs.get('timeout', self.timeout)
         result_processor = kwargs.pop('result_processor', None)
-        res = requests.request(
+        res = http.request(
             method=method,
             url=url,
             **kwargs
@@ -196,7 +197,7 @@ class BaseWeChatClient(object):
     def _fetch_access_token(self, url, params):
         """ The real fetch access token """
         logger.info('Fetching access token')
-        res = requests.get(
+        res = http.get(
             url=url,
             params=params
         )

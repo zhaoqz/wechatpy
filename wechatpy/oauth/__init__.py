@@ -22,6 +22,7 @@ from six.moves.urllib.parse import quote
 from wechatpy.utils import json
 from wechatpy.exceptions import WeChatOAuthException
 
+http = requests.Session()
 
 class WeChatOAuth(object):
     """微信公众平台 OAuth 网页授权 """
@@ -59,7 +60,7 @@ class WeChatOAuth(object):
             body = body.encode('utf-8')
             kwargs['data'] = body
 
-        res = requests.request(
+        res = http.request(
             method=method,
             url=url,
             **kwargs
