@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
-import sys
 import inspect
 import logging
 
@@ -57,21 +56,11 @@ class WeChatPay(object):
 
     def __new__(cls, *args, **kwargs):
         self = super(WeChatPay, cls).__new__(cls)
-        if sys.version_info[:2] == (2, 6):
-            import copy
-            # Python 2.6 inspect.gemembers bug workaround
-            # http://bugs.python.org/issue1785
-            for name, _api in self.__class__.__dict__.items():
-                if isinstance(_api, BaseWeChatPayAPI):
-                    _api = copy.deepcopy(_api)
-                    _api._client = self
-                    setattr(self, name, _api)
-        else:
-            api_endpoints = inspect.getmembers(self, _is_api_endpoint)
-            for name, _api in api_endpoints:
-                api_cls = type(_api)
-                _api = api_cls(self)
-                setattr(self, name, _api)
+        api_endpoints = inspect.getmembers(self, _is_api_endpoint)
+        for name, _api in api_endpoints:
+            api_cls = type(_api)
+            _api = api_cls(self)
+            setattr(self, name, _api)
         return self
 
     def __init__(self, appid, api_key, mch_id, sub_mch_id=None,
@@ -90,6 +79,7 @@ class WeChatPay(object):
         self.sub_mch_id = sub_mch_id
         self.mch_cert = mch_cert
         self.mch_key = mch_key
+        self._http = requests.Session()
 
     def _request(self, method, url_or_endpoint, **kwargs):
         if not url_or_endpoint.startswith(('http://', 'https://')):
@@ -117,7 +107,7 @@ class WeChatPay(object):
         if self.mch_cert and self.mch_key:
             kwargs['cert'] = (self.mch_cert, self.mch_key)
 
-        res = requests.request(
+        res = self._http.request(
             method=method,
             url=url,
             **kwargs

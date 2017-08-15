@@ -9,12 +9,6 @@
     :license: MIT, see LICENSE for more details.
 """
 from __future__ import absolute_import, unicode_literals
-try:
-    from pkgutil import extend_path
-    __path__ = extend_path(__path__, __name__)
-except ImportError:
-    from pkg_resources import declare_namespace
-    declare_namespace(__name__)
 
 import requests
 from six.moves.urllib.parse import quote
@@ -22,7 +16,6 @@ from six.moves.urllib.parse import quote
 from wechatpy.utils import json
 from wechatpy.exceptions import WeChatOAuthException
 
-http = requests.Session()
 
 class WeChatOAuth(object):
     """微信公众平台 OAuth 网页授权 """
@@ -45,6 +38,7 @@ class WeChatOAuth(object):
         self.redirect_uri = redirect_uri
         self.scope = scope
         self.state = state
+        self._http = requests.Session()
 
     def _request(self, method, url_or_endpoint, **kwargs):
         if not url_or_endpoint.startswith(('http://', 'https://')):
@@ -60,7 +54,7 @@ class WeChatOAuth(object):
             body = body.encode('utf-8')
             kwargs['data'] = body
 
-        res = http.request(
+        res = self._http.request(
             method=method,
             url=url,
             **kwargs
